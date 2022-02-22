@@ -1,0 +1,16 @@
+body {
+    background-color: gray;
+    margin: 0;
+  }
+  
+  .block {
+    position: relative;
+    width: 25vw;
+    height: 25vh;
+    transition: left 3s;
+  }
+  
+  #red { background-color: red; }
+  #green { background-color: lime; }
+  #blue { background-color: cyan; }
+  #purple { background-color: fuchsia; }

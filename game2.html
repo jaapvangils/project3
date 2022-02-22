@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+canvas {
+    border:1px solid #d3d3d3;
+    background-color: #f1f1f1;
+}
+</style>
+</head>
+<body onload="startGame()">
+<script>
+
+var myGamePiece;
+
+function startGame() {
+    myGamePiece = new component(20, 20, "blue", 10, 120);
+    myGameArea.start();
+}
+
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = 480;
+        this.canvas.height = 270;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.interval = setInterval(updateGameArea, 20);
+
+        window.addEventListener('keydown', function (e) {
+          myGameArea.key = e.keyCode;
+        })
+        window.addEventListener('keyup', function (e) {
+          myGameArea.key = false;
+        })
+    },
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    }
+    
+
+}
+
+function component(width, height, color, x, y) {
+    this.width = width;
+    this.height = height;
+    this.speedX = 0;
+    this.speedY = 0;
+    this.x = x;
+    this.y = y;    
+    this.update = function() {
+        ctx = myGameArea.context;
+        ctx.fillStyle = color;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+    }
+
+    this.newPos = function() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x<0) {myGamePiece.speedX = 0-myGamePiece.speedX; this.x = 0;}        
+        if (this.y<0) {myGamePiece.speedY = 0-myGamePiece.speedY; this.y = 0;}  
+        if (this.x>myGameArea.canvas.width-myGamePiece.width) {myGamePiece.speedX = 0-myGamePiece.speedX; this.x = myGameArea.canvas.width-myGamePiece.width; }  
+        if (this.y>myGameArea.canvas.height-myGamePiece.height) {myGamePiece.speedY = 0-myGamePiece.speedY; this.y = myGameArea.canvas.height-myGamePiece.height;} 
+    }   
+}
+
+function stopMove() {
+  myGamePiece.speedX = 0;
+  myGamePiece.speedY = 0;
+}
+function updateGameArea() {
+    myGameArea.clear();
+
+    if (myGameArea.key && myGameArea.key == 37) {myGamePiece.x -= 1; } //links
+    if (myGameArea.key && myGameArea.key == 39) {myGamePiece.x += 1; } // rechts
+    if (myGameArea.key && myGameArea.key == 38) {myGamePiece.y -= 1; } // omhoog
+    if (myGameArea.key && myGameArea.key == 40) {myGamePiece.y += 1; } // omlaag
+
+    myGamePiece.newPos();    
+    myGamePiece.update();
+}
+
+function moveup() {
+    myGamePiece.speedY -= 1; 
+}
+
+function movedown() {
+    myGamePiece.speedY += 1; 
+}
+
+function moveleft() {
+    myGamePiece.speedX -= 1; 
+}
+
+function moveright() {
+    myGamePiece.speedX += 1; 
+}
+
+function resetMove() {
+    myGamePiece.x = myGameArea.canvas.width / 2;
+    myGamePiece.y = myGameArea.canvas.height / 2;
+}
+</script>
+<div style="text-align:center;width:480px;">
+    <button onmousedown="moveup()" ontouchstart="moveup()">UP</button>
+    <button onmousedown="movedown()" ontouchstart="movedown()">DOWN</button>
+    <button onmousedown="moveleft()" ontouchstart="moveleft()">LEFT</button>
+    <button onmousedown="moveright()" ontouchstart="moveright()">RIGHT</button>
+    <button onmousedown="stopMove()">STOP</button>    
+    <button onmousedown="resetMove()">RESET</button>
+</div>
+
+<p>If you click a button the red square will start moving. Click the same button many times, and it will move faster and faster.</p>
+</body>
+</html>
