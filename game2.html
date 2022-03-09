@@ -14,7 +14,7 @@ canvas {
 
 var myGamePiece;
 var myScore;
-var myObstacles = [];
+var myStaart = [];
 var zerakenelkaar = 0;
 
 function startGame() {
@@ -31,13 +31,14 @@ var myGameArea = {
         this.canvas.height = 270;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-        this.interval = setInterval(updateGameArea, 20);
+        this.interval = setInterval(updateGameArea, 10);
 
         window.addEventListener('keydown', function (e) {
-          myGameArea.key = e.keyCode;
+            myGameArea.keys = (myGameArea.keys || []);
+            myGameArea.keys[e.keyCode] = true;
         })
         window.addEventListener('keyup', function (e) {
-          myGameArea.key = false;
+            myGameArea.keys[e.keyCode] = false;
         })
     },
     clear : function() {
@@ -112,10 +113,16 @@ function updateGameArea() {
     {   
       myGameArea.clear();
 
-      if (myGameArea.key && myGameArea.key == 37) {myGamePiece2.x -= 1; } //links
-      if (myGameArea.key && myGameArea.key == 39) {myGamePiece2.x += 1; } // rechts
-      if (myGameArea.key && myGameArea.key == 38) {myGamePiece2.y -= 1; } // omhoog
-      if (myGameArea.key && myGameArea.key == 40) {myGamePiece2.y += 1; } // omlaag
+      if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece2.x -= 1; } //links
+      if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece2.x += 1; } // rechts
+      if (myGameArea.keys && myGameArea.keys[38]) {myGamePiece2.y -= 1; } // omhoog
+      if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece2.y += 1; } // omlaag
+
+      if (myGameArea.keys && myGameArea.keys[65]) {myGamePiece.x -= 1; } //links
+      if (myGameArea.keys && myGameArea.keys[83]) {myGamePiece.x += 1; } // rechts
+      if (myGameArea.keys && myGameArea.keys[87]) {myGamePiece.y -= 1; } // omhoog
+      if (myGameArea.keys && myGameArea.keys[90]) {myGamePiece.y += 1; } // omlaag
+
 
       myScore.text = "CRASH: " + zerakenelkaar;
       myScore.update();
