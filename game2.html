@@ -4,8 +4,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <style>
 canvas {
-    border:1px solid #d3d3d3;
-    background-color: #f1f1f1;
+    border:2px solid #fb0606;
+    background-color: #a3cf8a;
 }
 </style>
 </head>
@@ -13,10 +13,14 @@ canvas {
 <script>
 
 var myGamePiece;
+var myScore;
+var myObstacles = [];
+var zerakenelkaar = 0;
 
 function startGame() {
     myGamePiece = new component(20, 20, "blue", 10, 120);
     myGamePiece2 = new component(20, 20, "red", 100, 60);
+    myScore = new component("30px", "Consolas", "black", 280, 40, "text");
     myGameArea.start();
 }
 
@@ -38,12 +42,16 @@ var myGameArea = {
     },
     clear : function() {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    },
+    stop : function() {
+        clearInterval(this.interval);
     }
     
 
 }
 
-function component(width, height, color, x, y) {
+function component(width, height, color, x, y, type) {
+    this.type = type;
     this.width = width;
     this.height = height;
     this.speedX = 0;
@@ -51,11 +59,16 @@ function component(width, height, color, x, y) {
     this.x = x;
     this.y = y;    
     this.update = function() {
-        ctx = myGameArea.context;
+    ctx = myGameArea.context;
+    if (this.type == "text") {
+        ctx.font = this.width + " " + this.height;
         ctx.fillStyle = color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.fillText(this.text, this.x, this.y);
+        } else {
+         ctx.fillStyle = color;
+         ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
     }
-
     this.newPos = function() {
         this.x += this.speedX;
         this.y += this.speedY;
@@ -63,7 +76,26 @@ function component(width, height, color, x, y) {
         if (this.y<0) {myGamePiece.speedY = 0-myGamePiece.speedY; this.y = 0;}  
         if (this.x>myGameArea.canvas.width-myGamePiece.width) {myGamePiece.speedX = 0-myGamePiece.speedX; this.x = myGameArea.canvas.width-myGamePiece.width; }  
         if (this.y>myGameArea.canvas.height-myGamePiece.height) {myGamePiece.speedY = 0-myGamePiece.speedY; this.y = myGameArea.canvas.height-myGamePiece.height;} 
-    }   
+    } 
+    
+    this.crashWith = function(otherobj) {
+      var myleft = this.x;
+      var myright = this.x + (this.width);
+      var mytop = this.y;
+      var mybottom = this.y + (this.height);
+      var otherleft = otherobj.x;
+      var otherright = otherobj.x + (otherobj.width);
+      var othertop = otherobj.y;
+      var otherbottom = otherobj.y + (otherobj.height);
+      var crash = true;
+      if ((mybottom < othertop) ||
+          (mytop > otherbottom) ||
+            (myright < otherleft) ||
+                (myleft > otherright)) {
+                    crash = false;
+        }
+      return crash;
+  } 
 }
 
 function stopMove() {
@@ -71,17 +103,27 @@ function stopMove() {
   myGamePiece.speedY = 0;
 }
 function updateGameArea() {
-    myGameArea.clear();
+  
+    if (myGamePiece.crashWith(myGamePiece2)) {
+      zerakenelkaar += 1;
+      resetMove();
+    } 
+    else 
+    {   
+      myGameArea.clear();
 
-    if (myGameArea.key && myGameArea.key == 37) {myGamePiece2.x -= 1; } //links
-    if (myGameArea.key && myGameArea.key == 39) {myGamePiece2.x += 1; } // rechts
-    if (myGameArea.key && myGameArea.key == 38) {myGamePiece2.y -= 1; } // omhoog
-    if (myGameArea.key && myGameArea.key == 40) {myGamePiece2.y += 1; } // omlaag
+      if (myGameArea.key && myGameArea.key == 37) {myGamePiece2.x -= 1; } //links
+      if (myGameArea.key && myGameArea.key == 39) {myGamePiece2.x += 1; } // rechts
+      if (myGameArea.key && myGameArea.key == 38) {myGamePiece2.y -= 1; } // omhoog
+      if (myGameArea.key && myGameArea.key == 40) {myGamePiece2.y += 1; } // omlaag
 
-    myGamePiece.newPos();    
-    myGamePiece.update();
-    myGamePiece2.newPos();    
-    myGamePiece2.update();
+      myScore.text = "CRASH: " + zerakenelkaar;
+      myScore.update();
+      myGamePiece.newPos();    
+      myGamePiece.update();
+      myGamePiece2.newPos();    
+      myGamePiece2.update();
+    }
 }
 
 function moveup() {
@@ -101,7 +143,7 @@ function moveright() {
 }
 
 function resetMove() {
-    myGamePiece.x = myGameArea.canvas.width / 2;
+    myGamePiece.x = Math.floor(Math.random() * myGameArea.canvas.width)
     myGamePiece.y = myGameArea.canvas.height / 2;
 }
 </script>
