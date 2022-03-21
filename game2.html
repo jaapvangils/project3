@@ -14,21 +14,24 @@ canvas {
 
 var myGamePiece;
 var myScore;
-var myStaart = [];
-var zerakenelkaar = 0;
+var zerakenelkaar = 0; // teller voor Crash
+
+//var img1 = new Image();
+//img1.src ="";
 
 function startGame() {
     myGamePiece = new component(20, 20, "blue", 10, 120);
     myGamePiece2 = new component(20, 20, "red", 100, 60);
-    myScore = new component("30px", "Consolas", "black", 280, 40, "text");
+    myGamePiece3 = new component(20, 20, "green", 200, 200);
+    myScore = new component("40px", "Consolas", "black", 370, 30, "text");
     myGameArea.start();
 }
 
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
-        this.canvas.width = 480;
-        this.canvas.height = 270;
+        this.canvas.width = 600;
+        this.canvas.height = 400;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.interval = setInterval(updateGameArea, 10);
@@ -53,8 +56,8 @@ var myGameArea = {
 
 function component(width, height, color, x, y, type) {
     this.type = type;
-    this.width = width;
-    this.height = height;
+    this.width = width; // of letter grootte
+    this.height = height; // of letter type
     this.speedX = 0;
     this.speedY = 0;
     this.x = x;
@@ -73,10 +76,16 @@ function component(width, height, color, x, y, type) {
     this.newPos = function() {
         this.x += this.speedX;
         this.y += this.speedY;
-        if (this.x<0) {myGamePiece.speedX = 0-myGamePiece.speedX; this.x = 0;}        
-        if (this.y<0) {myGamePiece.speedY = 0-myGamePiece.speedY; this.y = 0;}  
-        if (this.x>myGameArea.canvas.width-myGamePiece.width) {myGamePiece.speedX = 0-myGamePiece.speedX; this.x = myGameArea.canvas.width-myGamePiece.width; }  
-        if (this.y>myGameArea.canvas.height-myGamePiece.height) {myGamePiece.speedY = 0-myGamePiece.speedY; this.y = myGameArea.canvas.height-myGamePiece.height;} 
+        if (this.x<0) {this.speedX = 0-this.speedX; this.x = 0;}        
+        if (this.y<0) {this.speedY = 0-this.speedY; this.y = 0;}  
+        if (this.x>myGameArea.canvas.width-this.width) { 
+                this.speedX = 0-this.speedX; 
+                this.x = myGameArea.canvas.width-this.width; 
+            }  
+        if (this.y>myGameArea.canvas.height-this.height) {
+            this.speedY = 0-this.speedY; 
+            this.y = myGameArea.canvas.height-this.height;
+        } 
     } 
     
     this.crashWith = function(otherobj) {
@@ -105,8 +114,9 @@ function stopMove() {
 }
 function updateGameArea() {
   
-    if (myGamePiece.crashWith(myGamePiece2)) {
+    if (myGamePiece.crashWith(myGamePiece3) || myGamePiece2.crashWith(myGamePiece3) || myGamePiece.crashWith(myGamePiece2) ) {
       zerakenelkaar += 1;
+      document.getElementById('ScoreInHtml').innerHTML = zerakenelkaar;
       resetMove();
     } 
     else 
@@ -130,7 +140,14 @@ function updateGameArea() {
       myGamePiece.update();
       myGamePiece2.newPos();    
       myGamePiece2.update();
+      myGamePiece3.newPos();    
+      myGamePiece3.update();
     }
+}
+
+function startRun() {
+    myGamePiece3.speedX = -2;
+    myGamePiece.speedX = -2;
 }
 
 function moveup() {
@@ -151,7 +168,9 @@ function moveright() {
 
 function resetMove() {
     myGamePiece.x = Math.floor(Math.random() * myGameArea.canvas.width)
-    myGamePiece.y = myGameArea.canvas.height / 2;
+    myGamePiece.y = 120;
+    myGamePiece2.x = 10;
+    myGamePiece2.y = 10;
 }
 </script>
 <div style="text-align:center;width:480px;">
@@ -161,8 +180,10 @@ function resetMove() {
     <button onmousedown="moveright()" ontouchstart="moveright()">RIGHT</button>
     <button onmousedown="stopMove()">STOP</button>    
     <button onmousedown="resetMove()">RESET</button>
+    <button onmousedown="startRun()">START</button>
 </div>
 
 <p>If you click a button the red square will start moving. Click the same button many times, and it will move faster and faster.</p>
+<p>Score: <div id="ScoreInHtml"></div></p>
 </body>
 </html>
