@@ -7,6 +7,23 @@
     <title>Document</title>
 </head>
 <body>
-    
+
+    <H1>Tafels</H1>
+
+<form id="frm1">
+  Getal: <input type="text" name="getal"><br>
+  <input type="button" onclick="myFunction()" value="Submit">
+</form>
+    <script>
+        function myFunction() {
+          var uitlezen = document.getElementById("getal").value
+          geta1 = Number.parseInt(uitlezen);
+          document.write("tafel van \n");
+
+            for (var i = 0, tel = 10; i < tel; i += 1) {
+                document.write(i + " * " + geta1 + " = " + (i * geta1));
+            }
+        }
+    </script>
 </body>
 </html>
