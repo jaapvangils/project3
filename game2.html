@@ -15,12 +15,15 @@ canvas {
 var myGamePiece;
 var myScore;
 var zerakenelkaar = 0; // teller voor Crash
-
+var myBlokje = [];
 //var img1 = new Image();
 //img1.src ="";
 
 function startGame() {
     myGamePiece = new component(20, 20, "blue", 10, 120);
+    for (let i = 0; i < 10; i++) {
+        myBlokje[i] = new component (10,10, "yellow", Math.floor(Math.random() * 2 * myGameArea.canvas.width), 80 + i*30)
+    } 
     myGamePiece2 = new component(20, 20, "red", 100, 60);
     myGamePiece3 = new component(20, 20, "green", 200, 200);
     myScore = new component("40px", "Consolas", "black", 370, 30, "text");
@@ -119,6 +122,7 @@ function updateGameArea() {
       document.getElementById('ScoreInHtml').innerHTML = zerakenelkaar;
       resetMove();
     } 
+    
     else 
     {   
       myGameArea.clear();
@@ -142,12 +146,20 @@ function updateGameArea() {
       myGamePiece2.update();
       myGamePiece3.newPos();    
       myGamePiece3.update();
+      for (let i = 0; i < 10; i++) {
+        myBlokje[i].newPos();
+        myBlokje[i].update();
+        } 
     }
 }
 
 function startRun() {
     myGamePiece3.speedX = -2;
     myGamePiece.speedX = -2;
+    for (let i = 0; i < 10; i++) {
+        myBlokje[i].speedX = -3;
+        } 
+    
 }
 
 function moveup() {
