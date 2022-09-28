@@ -1,0 +1,33 @@
+.mijnstyle {
+    float: right;
+    width: 2.7em;
+    line-height: 80%;
+    position: absolute;
+    bottom: 25px;
+    right: 25px;
+    width: 200px;
+    height: 100px;
+}
+
+
+.plaatje2 {
+    float: right;
+    width: 25%;
+    line-height: 80%;
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    width: 400px;
+    height: auto;
+}
+
+.box1 {
+    width: 35%;
+    height: 200px;
+    background-color: coral;
+    overflow: hidden;
+    font-size: x-large;
+  }
+
+
+  

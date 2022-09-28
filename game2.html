@@ -7,26 +7,52 @@ canvas {
     border:2px solid #fb0606;
     background-color: #a3cf8a;
 }
+.button
+{
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  width:480px;
+}
 </style>
 </head>
 <body onload="startGame()">
 <script>
 
-var myGamePiece;
-var myScore;
-var zerakenelkaar = 0; // teller voor Crash
+/*var Speler1;
+var Speler2;
+var myGamePiece3;
+var myScoreR;
+var myScoreB;*/
+var rood = 0; // punten teller ROOD
+var blauw = 0; // punten teller Blauw
 var myBlokje = [];
 //var img1 = new Image();
 //img1.src ="";
 
+/*
+    Speler2.x = myGameArea.canvas.width - 40;
+    Speler2.y = 10;
+    Speler1.x = 20;
+    Speler1.y = 10;
+    */
+
 function startGame() {
-    myGamePiece = new component(20, 20, "blue", 10, 120);
+    Speler2 = new component(20, 20, "blue", myGameArea.canvas.width * 2 - 40, 20 );
     for (let i = 0; i < 10; i++) {
-        myBlokje[i] = new component (10,10, "yellow", Math.floor(Math.random() * 2 * myGameArea.canvas.width), 80 + i*30)
+        myBlokje[i] = new component (10,10, "yellow", Math.floor(Math.random() * myGameArea.canvas.width), 80 + i*30)
     } 
-    myGamePiece2 = new component(20, 20, "red", 100, 60);
-    myGamePiece3 = new component(20, 20, "green", 200, 200);
-    myScore = new component("40px", "Consolas", "black", 370, 30, "text");
+    Speler1 = new component(20, 20, "red", 10, 20);
+    myGamePiece3 = new component(15, 15, "green", 200, 200);
+    myScoreR = new component("40px", "Consolas", "black", 30, 27, "text"); // score rood
+    myScoreB = new component("40px", "Consolas", "black", 400, 27, "text"); // score blauw
     myGameArea.start();
 }
 
@@ -112,38 +138,66 @@ function component(width, height, color, x, y, type) {
 }
 
 function stopMove() {
-  myGamePiece.speedX = 0;
-  myGamePiece.speedY = 0;
+  myGamePiece3.speedX = 0;
+  myGamePiece3.speedX = 0;
+    for (let i = 0; i < 10; i++) {
+        myBlokje[i].speedX = 0;
+        } 
 }
 function updateGameArea() {
-  
-    if (myGamePiece.crashWith(myGamePiece3) || myGamePiece2.crashWith(myGamePiece3) || myGamePiece.crashWith(myGamePiece2) ) {
-      zerakenelkaar += 1;
-      document.getElementById('ScoreInHtml').innerHTML = zerakenelkaar;
-      resetMove();
+    let go = true;
+    // crash van rood met een ander object = punt voor blauw.
+    for (let i = 0; i < 10; i++) {
+        if (Speler1.crashWith(myBlokje[i])) {
+            blauw += 1;
+            document.getElementById('ScoreInHtmlB').innerHTML = blauw;
+            resetMove();
+            go = false;
+        }
     } 
-    
-    else 
+    if (Speler1.crashWith(myGamePiece3)) {
+      blauw += 2;
+      document.getElementById('ScoreInHtmlB').innerHTML = blauw;
+      resetMove();
+      go = false;
+    }     
+    for (let i = 0; i < 10; i++) {
+        if (Speler2.crashWith(myBlokje[i])) {
+            rood += 1;
+            document.getElementById('ScoreInHtmlR').innerHTML = rood;
+            resetMove();
+            go = false;
+        }
+    } 
+    if (Speler2.crashWith(myGamePiece3)) {
+      rood += 2;
+      //document.getElementById('ScoreInHtml').innerHTML = zerakenelkaar;
+      resetMove();
+      go = false;
+    }     
+    if (go)
     {   
       myGameArea.clear();
 
-      if (myGameArea.keys && myGameArea.keys[37]) {myGamePiece2.x -= 1; } //links
-      if (myGameArea.keys && myGameArea.keys[39]) {myGamePiece2.x += 1; } // rechts
-      if (myGameArea.keys && myGameArea.keys[38]) {myGamePiece2.y -= 1; } // omhoog
-      if (myGameArea.keys && myGameArea.keys[40]) {myGamePiece2.y += 1; } // omlaag
+      if (myGameArea.keys && myGameArea.keys[37]) {Speler1.x -= 1; } //links
+      if (myGameArea.keys && myGameArea.keys[39]) {Speler1.x += 1; } // rechts
+      if (myGameArea.keys && myGameArea.keys[38]) {Speler1.y -= 1; } // omhoog
+      if (myGameArea.keys && myGameArea.keys[40]) {Speler1.y += 1; } // omlaag
 
-      if (myGameArea.keys && myGameArea.keys[65]) {myGamePiece.x -= 1; } //links
-      if (myGameArea.keys && myGameArea.keys[83]) {myGamePiece.x += 1; } // rechts
-      if (myGameArea.keys && myGameArea.keys[87]) {myGamePiece.y -= 1; } // omhoog
-      if (myGameArea.keys && myGameArea.keys[90]) {myGamePiece.y += 1; } // omlaag
+      if (myGameArea.keys && myGameArea.keys[65]) {Speler2.x -= 1; } //links
+      if (myGameArea.keys && myGameArea.keys[83]) {Speler2.x += 1; } // rechts
+      if (myGameArea.keys && myGameArea.keys[87]) {Speler2.y -= 1; } // omhoog
+      if (myGameArea.keys && myGameArea.keys[90]) {Speler2.y += 1; } // omlaag
 
 
-      myScore.text = "CRASH: " + zerakenelkaar;
-      myScore.update();
-      myGamePiece.newPos();    
-      myGamePiece.update();
-      myGamePiece2.newPos();    
-      myGamePiece2.update();
+      myScoreR.text = "ROOD: " + rood;
+      myScoreB.text = "BLAUW: " + blauw;
+      myScoreR.update();
+      myScoreB.update();
+      Speler2.newPos();    
+      Speler2.update();
+      Speler1.newPos();    
+      Speler1.update();
       myGamePiece3.newPos();    
       myGamePiece3.update();
       for (let i = 0; i < 10; i++) {
@@ -155,37 +209,40 @@ function updateGameArea() {
 
 function startRun() {
     myGamePiece3.speedX = -2;
-    myGamePiece.speedX = -2;
     for (let i = 0; i < 10; i++) {
-        myBlokje[i].speedX = -3;
+        myBlokje[i].speedX = 1 + Math.floor(Math.random() * 3);
         } 
     
 }
 
 function moveup() {
-    myGamePiece.speedY -= 1; 
+    Speler2.speedY -= 1; 
 }
 
 function movedown() {
-    myGamePiece.speedY += 1; 
+    Speler2.speedY += 1; 
 }
 
 function moveleft() {
-    myGamePiece.speedX -= 1; 
+    Speler2.speedX -= 1; 
 }
 
 function moveright() {
-    myGamePiece.speedX += 1; 
+    Speler2.speedX += 1; 
 }
 
 function resetMove() {
-    myGamePiece.x = Math.floor(Math.random() * myGameArea.canvas.width)
-    myGamePiece.y = 120;
-    myGamePiece2.x = 10;
-    myGamePiece2.y = 10;
+    Speler2.x = myGameArea.canvas.width - 40;
+    Speler2.y = 10;
+    Speler1.x = 20;
+    Speler1.y = 10;
+    for (let i = 0; i < 10; i++) {
+        myBlokje[i].x = Math.floor(Math.random() * myGameArea.canvas.width); 
+    }
 }
 </script>
-<div style="text-align:center;width:480px;">
+<p>&nbsp;</p>
+<div class="button">
     <button onmousedown="moveup()" ontouchstart="moveup()">UP</button>
     <button onmousedown="movedown()" ontouchstart="movedown()">DOWN</button>
     <button onmousedown="moveleft()" ontouchstart="moveleft()">LEFT</button>
@@ -196,6 +253,7 @@ function resetMove() {
 </div>
 
 <p>If you click a button the red square will start moving. Click the same button many times, and it will move faster and faster.</p>
-<p>Score: <div id="ScoreInHtml"></div></p>
+<p>Score blauw: <div id="ScoreInHtmlB"></div></p>
+<p>Score rood: <div id="ScoreInHtmlR"></div></p>
 </body>
 </html>
